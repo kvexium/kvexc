@@ -1,0 +1,6 @@
+{
+    // Set the font
+    "editor.fontFamily": "JetBrains Mono", // Copied from current settings
+    // Turn on font ligatures
+    "editor.fontLigatures": true
+}

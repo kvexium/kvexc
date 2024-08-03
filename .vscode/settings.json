@@ -2,5 +2,8 @@
     // Set the font
     "editor.fontFamily": "JetBrains Mono", // Copied from current settings
     // Turn on font ligatures
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "editor.tabCompletion": "on",
+    "diffEditor.codeLens": true,
+    "MutableAI.upsell": true
 }

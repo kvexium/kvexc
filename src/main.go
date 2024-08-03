@@ -1,8 +1,19 @@
 package main
 
-func main () {
-	bytes, _ := os.readFile("./examples/00.kvxm")
-	source := string(bytes)
+import (
+    "os"
 
-	fmt.Printf("Code: {%s}\n", source)
+    "github.com/tlaceby/parser-series/src/lexer"
+)
+
+func main () {
+	bytes, _ := os.ReadFile("./examples/00.kvxm")
+	// source := string(bytes)
+
+	tokens := lexer.Tokenize(string(bytes))
+	// fmt.Printf("Code: {%s}\n", source)
+
+	for _, token := range tokens {
+        token.Debug()
+    }
 }

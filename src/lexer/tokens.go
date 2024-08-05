@@ -33,6 +33,8 @@ const (
 	LESS_EQUALS
 	GREATER
 	GREATER_EQUALS
+	AND
+	OR
 
 	DOT
 	DOUBLE_DOT
@@ -121,6 +123,8 @@ var kindToStringMap = map[TokenKind]string{
 	LESS_EQUALS:    "LESS_EQUALS",
 	GREATER:        "GREATER",
 	GREATER_EQUALS: "GREATER_EQUALS",
+	AND:            "AND",
+    OR:             "OR",
 	DOT:            "DOT",
 	DOUBLE_DOT:     "DOUBLE_DOT",
 	SEMICOLON:      "SEMICOLON",

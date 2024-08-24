@@ -1,0 +1,4 @@
+if isFileRecent(cretionTime: Time): bool {
+    let twentyFourHoursAgo: Time = time.now() - time.hours(24);
+    creationTime > twentyFourHoursAgo;
+}

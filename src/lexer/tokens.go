@@ -13,9 +13,8 @@ const (
 	TRUE
 	FALSE
 
-	NUMBER
-	STRING
-	IDENTIFIER
+	NUM
+	IDENT
 
 	OPEN_BRACKET
 	CLOSE_BRACKET
@@ -24,75 +23,127 @@ const (
 	OPEN_PAREN
 	CLOSE_PAREN
 
-	ASSIGNMENT // =
-	EQUALS     // ==
-	NOT        // !
-	NOT_EQUALS // !=
+	EQUALS // =
+	NOT    // !
+	PLUS   // +
+	MINUS  // -
 
-	LESS
-	LESS_EQUALS
-	GREATER
-	GREATER_EQUALS
-	AND
-	OR
+	STAR     // *
+	SLASH    // /
+	MODULO   // %
+	CIRCFLEX // ^
 
-	DOT
-	DOUBLE_DOT
-	SEMICOLON
-	COLON
-	QUESTION
-	COMMA
+	SMALLER // <
+	GREATER // >
+	AND     // &
+	PIPE    // |
 
-	PLUS
-	PLUS_PLUS
-	PLUS_EQUALS
-	MINUS
-	MINUS_MINUS
-	MINUS_EQUALS
+	DOT       // .
+	SEMICOLON // ;
+	COLON     // :
+	COMMA     // ,
+	QUESTION  // ?
 
-	STAR
-	// STAR_EQUALS
-	SLASH
-	// SLASH_EQUALS
-	MODULO
+	APOSTROPHE // '
+	QUOTE      // "
 
 	// Reserved Keywords
-	LET
-	CONST
-	CLASS
+	CLASS // #<name>
 	NEW
-	IMPORT
-	FROM
-	FUNC
-	IF
-	ELSE
-	FOREACH
-	WHILE
-	FOR
-	EXPORT
-	TYPEOF
-	IN
+	USE // uses ...
+
+	IF    // if (...) {...}
+	WHILE // while (...) {...}
+	FOR   // for (...) {...}
+
+	// EXPORT
+	// TYPEOF
+
+	DEC // dec
+
+	I8
+	I16
+	I32
+	I64
+
+	U8
+	U16
+	U32
+	U64
+
+	F32
+	F64
+	F80
+
+	C64
+	C128
+
+	STR
+	CHAR
+
+	BOOL
 )
 
+var reserved_keywords map[string]TokenKind = map[string]TokenKind{
+	"null":  NULL,
+	"true":  TRUE,
+	"false": FALSE,
+
+	"class": CLASS,
+	"new":   NEW,
+	"uses":  USE,
+
+	"if":    IF,
+	"while": WHILE,
+	"for":   FOR,
+
+	// "export":  EXPORT,
+	// "typeof":  TYPEOF,
+
+	"dec": DEC,
+
+	"i8":  I8,
+	"i16": I16,
+	"i32": I32,
+	"i64": I64,
+
+	"u8":  U8,
+	"u16": U16,
+	"u32": U32,
+	"u64": U64,
+
+	"f32": F32,
+	"f64": F64,
+	"f80": F80,
+
+	"c64":  C64,
+	"c128": C128,
+
+	"str":  STR,
+	"char": CHAR,
+
+	"bool": BOOL,
+}
+
 type Token struct {
-	kind TokenKind
+	kind  TokenKind
 	value string
 }
 
-func (token Token) isOneOfMany (expectedTokens ...TokenKind) bool {
+func (token Token) isOneOfMany(expectedTokens ...TokenKind) bool {
 	for _, expected := range expectedTokens {
-        if token.kind == expected {
-            return true
-        }
-    }
-    return false
+		if token.kind == expected {
+			return true
+		}
+	}
+	return false
 }
 
-func (token Token) Debug () {
-	if token.kind == IDENTIFIER || token.kind == NUMBER || token.kind == STRING {
-		fmt.Printf("%s (%s)\n", TokenKindString(token.kind), token.value)
+func (token Token) Debug() {
+	if token.kind == IDENT || token.kind == NUM || token.kind == STR {
+		fmt.Printf("%s [ %s ]\n", TokenKindString(token.kind), token.value)
 	} else {
-		fmt.Printf("%s ()\n", TokenKindString(token.kind))
+		fmt.Printf("%s: '%s'\n", TokenKindString(token.kind), token.value)
 	}
 }
 
@@ -104,56 +155,78 @@ func NewToken(kind TokenKind, value string) Token {
 
 // Map to store the string representations of TokenKind constants.
 var kindToStringMap = map[TokenKind]string{
-	EOF:            "EOF",
-	NULL:           "NULL",
-	NUMBER:         "NUMBER",
-	STRING:         "STRING",
-	IDENTIFIER:     "IDENTIFIER",
-	OPEN_BRACKET:   "OPEN_BRACKET",
-	CLOSE_BRACKET:  "CLOSE_BRACKET",
-	OPEN_CURLY:     "OPEN_CURLY",
-	CLOSE_CURLY:    "CLOSE_CURLY",
-	OPEN_PAREN:     "OPEN_PAREN",
-	CLOSE_PAREN:    "CLOSE_PAREN",
-	ASSIGNMENT:     "ASSIGNMENT",
-	EQUALS:         "EQUALS",
-	NOT:            "NOT",
-	NOT_EQUALS:     "NOT_EQUALS",
-	LESS:           "LESS",
-	LESS_EQUALS:    "LESS_EQUALS",
-	GREATER:        "GREATER",
-	GREATER_EQUALS: "GREATER_EQUALS",
-	AND:            "AND",
-    OR:             "OR",
-	DOT:            "DOT",
-	DOUBLE_DOT:     "DOUBLE_DOT",
-	SEMICOLON:      "SEMICOLON",
-	COLON:          "COLON",
-	QUESTION:       "QUESTION",
-	COMMA:          "COMMA",
-	PLUS:           "PLUS",
-	PLUS_PLUS:      "PLUS_PLUS",
-	PLUS_EQUALS:    "PLUS_EQUALS",
-	MINUS:          "MINUS",
-	MINUS_MINUS:    "MINUS_MINUS",
-	MINUS_EQUALS:   "MINUS_EQUALS",
-	STAR:           "STAR",
-	SLASH:          "SLASH",
-	MODULO:         "MODULO",
-	NEW:            "NEW",
-	CONST:          "CONST",
-	CLASS:          "CLASS",
-	IMPORT:         "IMPORT",
-	FROM:           "FROM",
-	FUNC:           "FUNC",
-	IF:             "IF",
-	ELSE:           "ELSE",
-	FOREACH:        "FOREACH",
-	WHILE:          "WHILE",
-	FOR:            "FOR",
-	EXPORT:         "EXPORT",
-	TYPEOF:         "TYPEOF",
-	IN:             "IN",
+	EOF: "EOF",
+
+	NULL: "NULL",
+
+	OPEN_BRACKET:  "OPEN_BRACKET",
+	CLOSE_BRACKET: "CLOSE_BRACKET",
+	OPEN_CURLY:    "OPEN_CURLY",
+	CLOSE_CURLY:   "CLOSE_CURLY",
+	OPEN_PAREN:    "OPEN_PAREN",
+	CLOSE_PAREN:   "CLOSE_PAREN",
+
+	EQUALS:  "EQUALS",
+	NOT:     "NOT",
+	SMALLER: "SMALLER",
+	GREATER: "GREATER",
+	AND:     "AND",
+	PIPE:    "PIPE",
+
+	DOT:       "DOT",
+	SEMICOLON: "SEMICOLON",
+	COLON:     "COLON",
+	QUESTION:  "QUESTION",
+	COMMA:     "COMMA",
+
+	APOSTROPHE: "APOSTROPHE",
+	QUOTE:      "QUOTE",
+
+	PLUS:   "PLUS",
+	MINUS:  "MINUS",
+	STAR:   "STAR",
+	SLASH:  "SLASH",
+	MODULO: "MODULO",
+
+	TRUE:  "TRUE",
+	FALSE: "FALSE",
+
+	CLASS: "CLASS",
+	NEW:   "NEW",
+	USE:   "USE",
+
+	IF:    "IF",
+	WHILE: "WHILE",
+	FOR:   "FOR",
+
+	// EXPORT:         "EXPORT",
+	// TYPEOF:         "TYPEOF",
+
+	DEC: "DEC",
+
+	I8:  "I8",
+	I16: "I16",
+	I32: "I32",
+	I64: "I64",
+
+	U8:  "U8",
+	U16: "U16",
+	U32: "U32",
+	U64: "U64",
+
+	F32: "F32",
+	F64: "F64",
+	F80: "F80",
+
+	C64:  "C64",
+	C128: "C128",
+
+	BOOL: "BOOL",
+	NUM:  "NUM",
+
+	CHAR:  "CHAR",
+	STR:   "STR",
+	IDENT: "IDENT",
 }
 
 // TokenKindString returns the string representation of a TokenKind.

@@ -151,6 +151,11 @@ func (token Token) Debug() {
 	}
 }
 
+// gettokenKind methode as TokenKind
+func (token Token) GetTokenKind() TokenKind {
+	return token.kind
+}
+
 func NewToken(kind TokenKind, value string) Token {
 	return Token{
 		kind, value,

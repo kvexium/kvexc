@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tlaceby/parser-series/src/lexer"
+	"github.com/kvexium/kvexc/src/lexer"
 )
 
 func main() {

@@ -1,3 +1,3 @@
-module github.com/tlaceby/parser-series
+module github.com/kvexium/kvexc
 
 go 1.22.5

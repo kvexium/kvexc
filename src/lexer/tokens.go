@@ -16,12 +16,12 @@ const (
 	NUM
 	IDENT
 
-	OPEN_BRACKET
-	CLOSE_BRACKET
-	OPEN_CURLY
-	CLOSE_CURLY
-	OPEN_PAREN
-	CLOSE_PAREN
+	OPEN_BRACKET  // [
+	CLOSE_BRACKET // ]
+	OPEN_CURLY    // {
+	CLOSE_CURLY   // }
+	OPEN_PAREN    // (
+	CLOSE_PAREN   // )
 
 	EQUALS // =
 	NOT    // !
@@ -48,13 +48,16 @@ const (
 	QUOTE      // "
 
 	// Reserved Keywords
-	CLASS // #<name>
+	CLASS // class ...
 	NEW
 	USE // uses ...
 
-	IF    // if (...) {...}
-	WHILE // while (...) {...}
-	FOR   // for (...) {...}
+	IF       // if (...) {...}
+	WHILE    // while (...) {...}
+	FOR      // for (...) {...}
+	SWITCH   // switch (...) {...}
+	DEFAULT  // _
+	SW_VALUE // #
 
 	// EXPORT
 	// TYPEOF
@@ -89,13 +92,14 @@ var reserved_keywords map[string]TokenKind = map[string]TokenKind{
 	"true":  TRUE,
 	"false": FALSE,
 
-	"class": CLASS,
 	"new":   NEW,
 	"uses":  USE,
+	"class": CLASS,
 
-	"if":    IF,
-	"while": WHILE,
-	"for":   FOR,
+	"if":     IF,
+	"while":  WHILE,
+	"for":    FOR,
+	"switch": SWITCH,
 
 	// "export":  EXPORT,
 	// "typeof":  TYPEOF,

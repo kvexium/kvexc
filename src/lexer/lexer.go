@@ -85,9 +85,10 @@ func createLexer(source string) *lexer {
 			// define all patterns
 			{regexp.MustCompile(`(\+|-)?[0-9]+(\.[0-9]+)?`), numberHandler},
 			{regexp.MustCompile(`\s+`), skipHandler},
-			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), symbolHandler},
+			{regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9]*`), symbolHandler},
 			{regexp.MustCompile(`"[^"]*"`), stringHandler},
 			{regexp.MustCompile(`\/\/.*`), commentHandler},
+			{regexp.MustCompile(`\/\*(.|\s)*\*\/`), commentHandler},
 
 			{regexp.MustCompile(`\[`), defaultHandler(OPEN_BRACKET, "[")},
 			{regexp.MustCompile(`\]`), defaultHandler(CLOSE_BRACKET, "]")},
@@ -112,6 +113,7 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`/`), defaultHandler(SLASH, "/")},
 			{regexp.MustCompile(`%`), defaultHandler(MODULO, "%")},
 			{regexp.MustCompile(`\^`), defaultHandler(MODULO, "^")},
+			{regexp.MustCompile(`_`), defaultHandler(DEFAULT, "_")},
 		},
 	}
 }
@@ -130,8 +132,8 @@ func numberHandler(lex *lexer, regex *regexp.Regexp) {
 
 func stringHandler(lex *lexer, regex *regexp.Regexp) {
 	match := regex.FindStringIndex(lex.remainder())
-	stringLiteral := lex.remainder()[match[0]:match[1]]
-	fmt.Printf("String Matched: %s\n", match) // Debug output
+	stringLiteral := lex.remainder()[match[0]+1 : match[1]-1]
+	fmt.Printf("String Matched: %d\n", match) // Debug output
 	lex.push(NewToken(STR, stringLiteral))
 	lex.advanceN(len(stringLiteral) + 2)
 }

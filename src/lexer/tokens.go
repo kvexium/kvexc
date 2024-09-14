@@ -31,6 +31,7 @@ const (
 	MINUS        // -
 	MINUS_ASSIGN // -=
 	DECR         // --
+	COMPL        // ~
 
 	STAR     // *
 	EXPONENT // **
@@ -55,6 +56,11 @@ const (
 	IN        // ::
 	COMMA     // ,
 	QUESTION  // ?
+	THROWS    // ?>
+	THROW     // ?:
+
+	ARROW    // ->
+	SW_ARROW // =>
 
 	APOSTROPHE // '
 	QUOTE      // "
@@ -202,8 +208,13 @@ var KindToStringMap = map[TokenKind]string{
 	SEMICOLON: "SEMICOLON",
 	COLON:     "COLON",
 	IN:        "IN",
-	QUESTION:  "QUESTION",
 	COMMA:     "COMMA",
+	QUESTION:  "QUESTION",
+	THROWS:    "THROWS",
+	THROW:     "THROW",
+
+	ARROW:    "ARROW",
+	SW_ARROW: "SW_ARROW",
 
 	APOSTROPHE: "APOSTROPHE",
 	QUOTE:      "QUOTE",

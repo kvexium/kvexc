@@ -85,7 +85,8 @@ func createTokenLookups() {
 	nud(lexer.MINUS, unary, parseBinaryExpr)
 	nud(lexer.NOT, unary, parseBinaryExpr)
 	nud(lexer.INCR, unary, parseBinaryExpr)
-	nud(lexer.DECR, unary, parseBinaryExpr) */
+	nud(lexer.DECR, unary, parseBinaryExpr)
+	nud(lexer.COMPL, unary parseBinaryExpr) */
 
 	// Literals & Symbols
 	nud(lexer.NUM, primary, parsePrimaryExpr)

@@ -70,7 +70,7 @@ type regexHandler func(lex *lexer, regex *regexp.Regexp)
 func defaultHandler(kind TokenKind, value string) regexHandler {
 	return func(lex *lexer, regex *regexp.Regexp) {
 		match := regex.FindString(lex.remainder())
-		fmt.Printf("Matched: %s\n", match) // Debug output
+		fmt.Printf("Matched: %s :: %s :: value: %s\n", match, TokenKindString(kind), value) // Debug output
 		lex.advanceN(len(value))
 		lex.push(NewToken(kind, value))
 	}
@@ -83,9 +83,10 @@ func createLexer(source string) *lexer {
 		Tokens: make([]Token, 0),
 		patterns: []regexPattern{
 			// define all patterns
-			{regexp.MustCompile(`(\+|-)?[0-9]+(\.[0-9]+)?`), numberHandler},
+			// {regexp.MustCompile(`(\*(\*)?|&)?dec`), decHandler},
+			{regexp.MustCompile(`(-)?[0-9]+(\.[0-9]+[fF])?`), numberHandler},
 			{regexp.MustCompile(`\s+`), skipHandler},
-			{regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9]*`), symbolHandler},
+			{regexp.MustCompile(`[a-z][a-zA-Z0-9]+`), symbolHandler},
 			{regexp.MustCompile(`"[^"]*"`), stringHandler},
 			{regexp.MustCompile(`\/\/.*`), commentHandler},
 			{regexp.MustCompile(`\/\*(.|\s)*\*\/`), commentHandler},
@@ -108,7 +109,7 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`\|`), defaultHandler(B_OR, "|")},
 			{regexp.MustCompile(`&&`), defaultHandler(AND, "&&")},
 			{regexp.MustCompile(`&`), defaultHandler(B_AND, "&")},
-			{regexp.MustCompile(`^`), defaultHandler(B_XOR, "^")},
+			{regexp.MustCompile(`\^`), defaultHandler(B_XOR, "^")},
 			{regexp.MustCompile(`\.`), defaultHandler(DOT, ".")},
 			{regexp.MustCompile(`;`), defaultHandler(SEMICOLON, ";")},
 			{regexp.MustCompile(`::`), defaultHandler(IN, "::")},
@@ -121,9 +122,10 @@ func createLexer(source string) *lexer {
 			{regexp.MustCompile(`-=`), defaultHandler(MINUS_ASSIGN, "--")},
 			{regexp.MustCompile(`--`), defaultHandler(DECR, "--")},
 			{regexp.MustCompile(`-`), defaultHandler(MINUS, "-")},
+			{regexp.MustCompile(`~`), defaultHandler(MINUS, "~")},
 			{regexp.MustCompile(`\*\*`), defaultHandler(EXPONENT, "**")},
 			{regexp.MustCompile(`\*`), defaultHandler(STAR, "*")},
-			{regexp.MustCompile(`/`), defaultHandler(SLASH, "/")},
+			{regexp.MustCompile(`\/`), defaultHandler(SLASH, "/")},
 			{regexp.MustCompile(`%`), defaultHandler(MODULO, "%")},
 			{regexp.MustCompile(`#`), defaultHandler(SW_VALUE, "#")},
 			{regexp.MustCompile(`_`), defaultHandler(DEFAULT, "_")},
@@ -138,9 +140,24 @@ func skipHandler(lex *lexer, regex *regexp.Regexp) {
 
 func numberHandler(lex *lexer, regex *regexp.Regexp) {
 	match := regex.FindString(lex.remainder())
-	fmt.Printf("Number Matched: %s\n", match) // Debug output
+	fmt.Printf("Integer Number Matched: %s\n", match) // Debug output
+
+	isFloat := false
+
+	if match[len(match)-1] == 'f' || match[len(match)-1] == 'F' {
+		match = match[:len(match)-1]
+		isFloat = true
+	}
+
+	// Erstelle ein Token mit der Ganzzahl
 	lex.push(NewToken(NUM, match))
-	lex.advanceN(len(match))
+
+	// Bewege den Lexer vorwärts basierend auf der Länge des Matches
+	if isFloat {
+		lex.advanceN(len(match) + 1)
+	} else {
+		lex.advanceN(len(match))
+	}
 }
 
 func stringHandler(lex *lexer, regex *regexp.Regexp) {

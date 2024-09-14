@@ -24,7 +24,7 @@ func parseExpr(p *parser, bp bindingPower) ast.Expr {
 		ledFn, exists := ledLu[tokenKind]
 
 		if !exists {
-			panic(fmt.Sprintf("LED Handler expected for Token '%s'", lexer.TokenKindString(tokenkind)))
+			panic(fmt.Sprintf("LED Handler expected Token '%s'", lexer.TokenKindString(tokenkind)))
 		}
 
 		left = ledFn(p, left, bp)
@@ -36,12 +36,12 @@ func parseExpr(p *parser, bp bindingPower) ast.Expr {
 func parsePrimaryExpr(p *parser) ast.Expr {
 	switch p.currentTokenKind() {
 	case lexer.NUM:
-		number, _ := strconv.ParseFloat(p.currentToken().Value, 64)
+		number, _ := strconv.ParseFloat(p.advance().Value, 64)
 		return ast.NumberExpr{Value: number}
 	case lexer.STR:
-		return ast.StringExpr{Value: p.currentToken().Value}
+		return ast.StringExpr{Value: p.advance().Value}
 	case lexer.IDENT:
-		return ast.SymbolExpr{Value: p.currentToken().Value}
+		return ast.SymbolExpr{Value: p.advance().Value}
 	default:
 		panic(fmt.Sprintf("Cannot create Primary Expression from %s\n", lexer.TokenKindString(p.currentTokenKind())))
 	}

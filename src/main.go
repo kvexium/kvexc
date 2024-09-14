@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sanity-io/litter"
+
 	"github.com/kvexium/kvexc/src/lexer"
+	"github.com/kvexium/kvexc/src/parser"
 )
 
 func main() {
 	filePath := "./src/examples/"
-	fileName := "00.kvex"
+	fileName := "03.kvex"
 
 	currentDir, _ := os.Getwd()
 	fmt.Printf("Current directory: %s\n", currentDir)
@@ -27,7 +30,7 @@ func main() {
 
 	tokens := lexer.Tokenize(string(bytes))
 
-	for _, token := range tokens {
-		token.Debug()
-	}
+	ast := parser.Parse(tokens)
+
+	litter.Dump(ast)
 }

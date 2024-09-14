@@ -9,10 +9,10 @@ func (block BlockStmt) stmt() {
 	// Implement statement evaluation for BlockStmt
 }
 
-type ExpressiumStmt struct {
+type ExpressionStmt struct {
 	Expression Expr
 }
 
-func (expr ExpressiumStmt) stmt() {
+func (expr ExpressionStmt) stmt() {
 	// Implement statement evaluation for ExpressiumStmt
 }

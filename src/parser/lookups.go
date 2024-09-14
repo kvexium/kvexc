@@ -8,13 +8,14 @@ import (
 type bindingPower int
 
 const (
-	default_pb bindingPower = iota
+	defaultBp bindingPower = iota
 	comma
 	assignment
 	logical
 	relational
 	additive
 	multiplicative
+	exponentiation
 	unary
 	call
 	member
@@ -30,7 +31,64 @@ type nudLookup map[lexer.TokenKind]nudHandler
 type ledLookup map[lexer.TokenKind]ledHandler
 type bpLookup map[lexer.TokenKind]bindingPower
 
+var bpLu = bpLookup{}
+var nudLu = nudLookup{}
+var ledLu = ledLookup{}
+var stmtLu = stmtLookup{}
 
-func led(kind lexer.TokenKind, bp bindingPower, led_fn ledHandler) {
-	bpLu[]
+func led(kind lexer.TokenKind, bp bindingPower, ledFn ledHandler) {
+	bpLu[kind] = bp
+	ledLu[kind] = ledFn
+}
+
+func nud(kind lexer.TokenKind, bp bindingPower, nudFn nudHandler) {
+	bpLu[kind] = primary
+	nudLu[kind] = nudFn
+}
+
+func stmt(kind lexer.TokenKind, stmtFn stmtHandler) {
+	bpLu[kind] = defaultBp
+	stmtLu[kind] = stmtFn
+}
+
+func createTokenLookups() {
+	// Logical
+	led(lexer.AND, logical, parseBinaryExpr)
+	led(lexer.OR, logical, parseBinaryExpr)
+
+	// Relational
+	led(lexer.EQUALS, relational, parseBinaryExpr)
+	led(lexer.LESS, relational, parseBinaryExpr)
+	led(lexer.LESS_EQUALS, relational, parseBinaryExpr)
+	led(lexer.GREATER, relational, parseBinaryExpr)
+	led(lexer.GREATER_EQUALS, relational, parseBinaryExpr)
+
+	// Bitwise Relational
+	led(lexer.B_AND, relational, parseBinaryExpr)
+	led(lexer.B_XOR, relational, parseBinaryExpr)
+	led(lexer.B_OR, relational, parseBinaryExpr)
+
+	// TODO: IN Token
+
+	// Additive & Multiplicative
+	led(lexer.PLUS, additive, parseBinaryExpr)
+	led(lexer.MINUS, additive, parseBinaryExpr)
+
+	led(lexer.STAR, multiplicative, parseBinaryExpr)
+	led(lexer.SLASH, multiplicative, parseBinaryExpr)
+	led(lexer.MODULO, multiplicative, parseBinaryExpr)
+
+	led(lexer.EXPONENT, exponentiation, parseBinaryExpr)
+
+	/* // Unary
+	nud(lexer.PLUS, unary, parseBinaryExpr)
+	nud(lexer.MINUS, unary, parseBinaryExpr)
+	nud(lexer.NOT, unary, parseBinaryExpr)
+	nud(lexer.INCR, unary, parseBinaryExpr)
+	nud(lexer.DECR, unary, parseBinaryExpr) */
+
+	// Literals & Symbols
+	nud(lexer.NUM, primary, parsePrimaryExpr)
+	nud(lexer.STR, primary, parsePrimaryExpr)
+	nud(lexer.IDENT, primary, parsePrimaryExpr)
 }

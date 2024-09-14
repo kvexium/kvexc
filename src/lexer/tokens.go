@@ -23,24 +23,36 @@ const (
 	OPEN_PAREN    // (
 	CLOSE_PAREN   // )
 
-	EQUALS // =
-	NOT    // !
-	PLUS   // +
-	MINUS  // -
+	ASSIGN       // =
+	NOT          // !
+	PLUS         // +
+	PLUS_ASSIGN  // +=
+	INCR         // ++
+	MINUS        // -
+	MINUS_ASSIGN // -=
+	DECR         // --
 
 	STAR     // *
+	EXPONENT // **
 	SLASH    // /
 	MODULO   // %
-	CIRCFLEX // ^
 
-	SMALLER // <
-	GREATER // >
-	AND     // &
-	PIPE    // |
+	EQUALS         // ==
+	NOT_EQUALS     //!=
+	LESS           // <
+	LESS_EQUALS    // <=
+	GREATER        // >
+	GREATER_EQUALS // >=
+	B_AND          // &
+	AND            // &&
+	B_XOR          // ^
+	B_OR           // |
+	OR             // ||
 
 	DOT       // .
 	SEMICOLON // ;
 	COLON     // :
+	IN        // ::
 	COMMA     // ,
 	QUESTION  // ?
 
@@ -130,13 +142,13 @@ var reserved_keywords map[string]TokenKind = map[string]TokenKind{
 }
 
 type Token struct {
-	kind  TokenKind
-	value string
+	Kind  TokenKind
+	Value string
 }
 
 func (token Token) isOneOfMany(expectedTokens ...TokenKind) bool {
 	for _, expected := range expectedTokens {
-		if token.kind == expected {
+		if token.Kind == expected {
 			return true
 		}
 	}
@@ -144,26 +156,26 @@ func (token Token) isOneOfMany(expectedTokens ...TokenKind) bool {
 }
 
 func (token Token) Debug() {
-	if token.kind == IDENT || token.kind == NUM || token.kind == STR {
-		fmt.Printf("%s [ %s ]\n", TokenKindString(token.kind), token.value)
+	if token.Kind == IDENT || token.Kind == NUM || token.Kind == STR {
+		fmt.Printf("%s [ %s ]\n", TokenKindString(token.Kind), token.Value)
 	} else {
-		fmt.Printf("%s: '%s'\n", TokenKindString(token.kind), token.value)
+		fmt.Printf("%s: '%s'\n", TokenKindString(token.Kind), token.Value)
 	}
 }
 
 // gettokenKind methode as TokenKind
 func (token Token) GetTokenKind() TokenKind {
-	return token.kind
+	return token.Kind
 }
 
-func NewToken(kind TokenKind, value string) Token {
+func NewToken(Kind TokenKind, value string) Token {
 	return Token{
-		kind, value,
+		Kind, value,
 	}
 }
 
 // Map to store the string representations of TokenKind constants.
-var kindToStringMap = map[TokenKind]string{
+var KindToStringMap = map[TokenKind]string{
 	EOF: "EOF",
 
 	NULL: "NULL",
@@ -175,27 +187,38 @@ var kindToStringMap = map[TokenKind]string{
 	OPEN_PAREN:    "OPEN_PAREN",
 	CLOSE_PAREN:   "CLOSE_PAREN",
 
-	EQUALS:  "EQUALS",
-	NOT:     "NOT",
-	SMALLER: "SMALLER",
-	GREATER: "GREATER",
-	AND:     "AND",
-	PIPE:    "PIPE",
+	ASSIGN:         "ASSIGN",
+	NOT:            "NOT",
+	LESS:           "LESS",
+	LESS_EQUALS:    "LESS_EQUAL",
+	GREATER:        "GREATER",
+	GREATER_EQUALS: "GREATER_EQUAL",
+	B_AND:          "B_AND",
+	AND:            "AND",
+	B_OR:           "B_OR",
+	OR:             "OR",
 
 	DOT:       "DOT",
 	SEMICOLON: "SEMICOLON",
 	COLON:     "COLON",
+	IN:        "IN",
 	QUESTION:  "QUESTION",
 	COMMA:     "COMMA",
 
 	APOSTROPHE: "APOSTROPHE",
 	QUOTE:      "QUOTE",
 
-	PLUS:   "PLUS",
-	MINUS:  "MINUS",
-	STAR:   "STAR",
-	SLASH:  "SLASH",
-	MODULO: "MODULO",
+	EQUALS:       "EQUALS",
+	PLUS:         "PLUS",
+	PLUS_ASSIGN:  "PLUS_ASSIGN",
+	INCR:         "INCR",
+	MINUS:        "MINUS",
+	MINUS_ASSIGN: "MINUS_ASSIGN",
+	DECR:         "DECR",
+	STAR:         "STAR",
+	EXPONENT:     "EXPONENT",
+	SLASH:        "SLASH",
+	MODULO:       "MODULO",
 
 	TRUE:  "TRUE",
 	FALSE: "FALSE",
@@ -239,8 +262,8 @@ var kindToStringMap = map[TokenKind]string{
 }
 
 // TokenKindString returns the string representation of a TokenKind.
-func TokenKindString(kind TokenKind) string {
-	if str, ok := kindToStringMap[kind]; ok {
+func TokenKindString(Kind TokenKind) string {
+	if str, ok := KindToStringMap[Kind]; ok {
 		return str
 	}
 	return "UNKNOWN"

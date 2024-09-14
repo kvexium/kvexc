@@ -13,8 +13,8 @@
 ### Beispielcode
 
 ```kvexium
-#Main {
-	dec x: i8;
+class Main {
+	*dec x: i8;
 	x := 9;
 	x--;
 

@@ -1,34 +1,39 @@
-// main.go
 package main
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/sanity-io/litter"
-
 	"github.com/kvexium/kvexc/src/diagnostics"
 	"github.com/kvexium/kvexc/src/lexer"
 	"github.com/kvexium/kvexc/src/parser"
+	"github.com/sanity-io/litter"
 )
 
 func main() {
+	// Überladene Funktion für Fehler registrieren
+	diagnostics.CreateOverloadedFunction("Error",
+		"Input", func(fileName string) {
+			fmt.Printf("Input Error: Datei %s konnte nicht gefunden werden.\n", fileName)
+		},
+	)
+
 	filePath := "./src/examples/"
-	fileName := "03.kvex"
+	fileName := "02.kvex"
 
 	currentDir, _ := os.Getwd()
 	fmt.Printf("Current directory: %s\n", currentDir)
 
-	diagbag := diagnostics.DiagnosticsBag
-
 	// Versuche, die Datei zu lesen und gib einen Fehler aus, wenn dies nicht gelingt
 	bytes, err := os.ReadFile(filePath + fileName)
 	if err != nil {
-		diagbag
+		// Fehlerbehandlung: Aufruf der überladenen Funktion
+		diagnostics.CallOverloadedFunction("Error", "Input", fileName)
+		return // Beende die Funktion, um weitere Verarbeitung zu vermeiden
 	}
 
 	// Gib den gelesenen Inhalt aus, um zu überprüfen, ob er korrekt eingelesen wurde
-	fmt.Printf("File content:%s\n", string(bytes))
+	fmt.Printf("File content:\n%s\n", string(bytes))
 
 	tokens := lexer.Tokenize(string(bytes))
 

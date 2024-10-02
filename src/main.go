@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// Überladene Funktion für Fehler registrieren
+	// Registriere die überladene Fehlerfunktion
 	diagnostics.CreateOverloadedFunction("Error",
 		"Input", func(fileName string) {
 			fmt.Printf("Input Error: Datei %s konnte nicht gefunden werden.\n", fileName)
@@ -22,7 +22,7 @@ func main() {
 	fileName := "02.kvex"
 
 	currentDir, _ := os.Getwd()
-	fmt.Printf("Current directory: %s\n", currentDir)
+	fmt.Printf("Aktuelles Verzeichnis: %s\n", currentDir)
 
 	// Versuche, die Datei zu lesen und gib einen Fehler aus, wenn dies nicht gelingt
 	bytes, err := os.ReadFile(filePath + fileName)
@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// Gib den gelesenen Inhalt aus, um zu überprüfen, ob er korrekt eingelesen wurde
-	fmt.Printf("File content:\n%s\n", string(bytes))
+	fmt.Printf("Dateiinhalt:\n%s\n", string(bytes))
 
 	tokens := lexer.Tokenize(string(bytes))
 

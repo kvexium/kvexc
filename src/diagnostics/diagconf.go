@@ -1,45 +1,52 @@
 package diagnostics
 
-import (
-	"fmt"
-	"reflect"
-)
+import "fmt"
 
-// Funktion zur Fehlerausgabe definieren
-func Create() {
-	printArithmeticError := func(file string, line int, column int, token string, description string) {
+// Beispiel für die Verwendung von RegisterFunction und CallFunction
+func CreateAll() {
+	// Funktion zur Fehlerausgabe definieren
+	printArithmeticError := func(args ...interface{}) {
+		if len(args) < 5 {
+			fmt.Println("Invalid number of arguments")
+			return
+		}
+		file := args[0].(string)
+		line := args[1].(int)
+		column := args[2].(int)
+		token := args[3].(string)
+		description := args[4].(string)
+
 		fmt.Printf("Arithmetic Error in %s at line %d, column %d: %s. Description: %s\n",
 			file, line, column, token, description)
 	}
 
-	printTokenError := func(file string, line int, column int, token string) {
+	printTokenError := func(args ...interface{}) {
+		if len(args) < 4 {
+			fmt.Println("Invalid number of arguments")
+			return
+		}
+		file := args[0].(string)
+		line := args[1].(int)
+		column := args[2].(int)
+		token := args[3].(string)
+
 		fmt.Printf("Token Error in %s at line %d, column %d: %s\n",
 			file, line, column, token)
 	}
 
-	// Überladene Funktionen registrieren
-	CreateOverloadedFunction("Error",
-		"Token", reflect.ValueOf(printTokenError),
-		"Arithmetic", reflect.ValueOf(printArithmeticError),
-	)
+	printInputFileError := func(args ...interface{}) {
+		if len(args) < 1 {
+			fmt.Println("Invalid number of arguments")
+			return
+		}
+		file := args[0].(string)
 
-	// Füge eine neue überladene Funktion hinzu
-	AddOverloadedFunction("Error",
-		"Type", reflect.ValueOf(func(file string, line int, column int, token string, expected string) {
-			fmt.Printf("Type Error in %s at line %d, column %d: %s. Expected: %s\n",
-				file, line, column, token, expected)
-		}),
-		"Input", reflect.ValueOf(func(file string) {
-			fmt.Printf("INput Error: Couldn't load file %s\n",
-				file)
-		}),
-	)
-
-	// Registriere einen benutzerdefinierten Fehler und rufe ihn auf
-	/* myCustomError := func(message string) {
-		fmt.Printf("Custom Error: %s\n", message)
+		fmt.Printf("Input File Error caused by: %s cannot be found\n",
+			file)
 	}
 
-	createOverloadedFunction("CustomError", "Custom", reflect.ValueOf(myCustomError))
-	callOverloadedFunction("CustomError", "Custom", "Something went wrong!") */
+	// Funktionen registrieren
+	RegisterFunction("Error", "Arithmetic", printArithmeticError)
+	RegisterFunction("Error", "Token", printTokenError)
+	RegisterFunction("Error", "InputFile", printInputFileError)
 }

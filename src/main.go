@@ -11,12 +11,6 @@ import (
 )
 
 func main() {
-	// Registriere die überladene Fehlerfunktion
-	diagnostics.CreateOverloadedFunction("Error",
-		"Input", func(fileName string) {
-			fmt.Printf("Input Error: Datei %s konnte nicht gefunden werden.\n", fileName)
-		},
-	)
 
 	filePath := "./src/examples/"
 	fileName := "02.kvex"
@@ -28,7 +22,7 @@ func main() {
 	bytes, err := os.ReadFile(filePath + fileName)
 	if err != nil {
 		// Fehlerbehandlung: Aufruf der überladenen Funktion
-		diagnostics.CallOverloadedFunction("Error", "Input", fileName)
+		diagnostics.ThrowDiagnostic("Error", "InputFile", fileName)
 		return // Beende die Funktion, um weitere Verarbeitung zu vermeiden
 	}
 

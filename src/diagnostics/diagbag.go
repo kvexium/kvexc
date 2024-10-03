@@ -21,13 +21,13 @@ func RegisterFunction(_type string, argType string, fn func(...interface{})) {
 func ThrowDiagnostic(_type string, argType string, args ...interface{}) error {
 	if FunctionRegistry[_type] == nil {
 		fmt.Printf("%s No matching diagnostics type '%s' found\n",
-			diagnostics.FrontTextNamed(_type, string(diagnostics.Error), "DiagnosticsBag"), _type)
+			diagnostics.FrontTextNamed(_type, Error, "DiagnosticsBag"), _type)
 	}
 
 	fn, ok := FunctionRegistry[_type][argType]
 	if !ok {
 		fmt.Printf("%s No matching argument type '%s' found\n",
-			diagnostics.FrontTextNamed(_type, string(diagnostics.Error), "DiagnosticsBag"), argType)
+			diagnostics.FrontTextNamed(_type, Error, "DiagnosticsBag"), argType)
 	}
 
 	fn(args...)

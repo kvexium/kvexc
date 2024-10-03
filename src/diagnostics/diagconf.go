@@ -1,52 +1,110 @@
 package diagnostics
 
-import "fmt"
+import (
+	"fmt"
+)
+
+// Colorcodes
+type Colors string
+
+const (
+	Error   Colors = "#d77a61"
+	Warning Colors = "#f2a65a"
+	Info    Colors = "#52796f"
+	Debug   Colors = "#d8b4a0"
+)
 
 // Beispiel für die Verwendung von RegisterFunction und CallFunction
 func CreateAll() {
+	FrontTextNamed := func(_type string, color string, name string) string {
+		return fmt.Sprintf("[ %s :: %s ]", Colorize(color, []string{"bold"}, _type), name)
+	}
+
+	FrontText := func(_type string, color string) string {
+		return fmt.Sprintf("[ %s ]", Colorize(color, []string{"bold"}, _type))
+	}
+
+	FrontTextPosNamed := func(_type string, color string, name string, file string, line int, column int) string {
+		return fmt.Sprintf("[ %s :: %s | %s %d:%d ]", Colorize(color, []string{"bold"}, _type), name, file, line, column)
+	}
+
+	// DO NOT REMOVE !
+	printDefaultArgsError := func(_type string, name string) {
+		fmt.Println(FrontTextNamed("Error", string(Error), "DiagnosticsBag") + " Invalid number of arguments for [ " +
+			_type + ", " + name + " ]")
+	}
+
 	// Funktion zur Fehlerausgabe definieren
 	printArithmeticError := func(args ...interface{}) {
-		if len(args) < 5 {
-			fmt.Println("Invalid number of arguments")
+		_type := "Error"
+		name := "Arithmetic"
+
+		if len(args) != 6 {
+			printDefaultArgsError(_type, name)
 			return
 		}
 		file := args[0].(string)
 		line := args[1].(int)
 		column := args[2].(int)
-		token := args[3].(string)
-		description := args[4].(string)
+		left := args[3].(string)
+		right := args[4].(string)
+		operation := args[5].(string)
 
-		fmt.Printf("Arithmetic Error in %s at line %d, column %d: %s. Description: %s\n",
-			file, line, column, token, description)
+		// 'type', Cannot <add> 'string'!
+		fmt.Printf("%s '%s', Cannot %s '%s'\n",
+			FrontTextPosNamed(_type, string(Error), name, file, line, column), left, operation, right)
 	}
 
 	printTokenError := func(args ...interface{}) {
-		if len(args) < 4 {
-			fmt.Println("Invalid number of arguments")
+		_type := "Error"
+		name := "Token"
+
+		if len(args) != 4 {
+			printDefaultArgsError(_type, name)
 			return
 		}
 		file := args[0].(string)
 		line := args[1].(int)
 		column := args[2].(int)
-		token := args[3].(string)
+		expected := args[3].(string)
 
-		fmt.Printf("Token Error in %s at line %d, column %d: %s\n",
-			file, line, column, token)
+		fmt.Printf("%s Unexpected Token found! Expected Token '%s'\n",
+			FrontTextPosNamed(_type, string(Error), name, file, line, column), expected)
 	}
 
 	printInputFileError := func(args ...interface{}) {
-		if len(args) < 1 {
-			fmt.Println("Invalid number of arguments")
+		_type := "Error"
+		name := "InputFile"
+
+		if len(args) != 2 {
+			printDefaultArgsError(_type, name)
 			return
 		}
 		file := args[0].(string)
+		dir := args[1].(string)
 
-		fmt.Printf("Input File Error caused by: %s cannot be found\n",
-			file)
+		fmt.Printf("%s Cannot find file '%s' in directory '%s'\n",
+			FrontTextNamed(_type, string(Error), name), file, dir)
+	}
+
+	printSourceCurrentDirDebug := func(args ...interface{}) {
+		_type := "Debug"
+		name := "SourceCurrentDirectory"
+
+		if len(args) != 1 {
+			printDefaultArgsError(_type, name)
+			return
+		}
+		dir := args[0].(string)
+
+		fmt.Printf("%s Current Directory: %s\n",
+			FrontText(_type, string(Debug)), dir)
 	}
 
 	// Funktionen registrieren
 	RegisterFunction("Error", "Arithmetic", printArithmeticError)
 	RegisterFunction("Error", "Token", printTokenError)
 	RegisterFunction("Error", "InputFile", printInputFileError)
+
+	RegisterFunction("Debug", "SourceCurrentDirectory", printSourceCurrentDirDebug)
 }

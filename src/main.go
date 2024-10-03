@@ -11,18 +11,19 @@ import (
 )
 
 func main() {
+	diagnostics.CreateAll()
 
 	filePath := "./src/examples/"
 	fileName := "02.kvex"
 
 	currentDir, _ := os.Getwd()
-	fmt.Printf("Aktuelles Verzeichnis: %s\n", currentDir)
+	diagnostics.ThrowDiagnostic("Debug", "SourceCurrentDirectory", currentDir)
 
 	// Versuche, die Datei zu lesen und gib einen Fehler aus, wenn dies nicht gelingt
 	bytes, err := os.ReadFile(filePath + fileName)
 	if err != nil {
 		// Fehlerbehandlung: Aufruf der überladenen Funktion
-		diagnostics.ThrowDiagnostic("Error", "InputFile", fileName)
+		diagnostics.ThrowDiagnostic("Error", "InputFile", fileName, filePath)
 		return // Beende die Funktion, um weitere Verarbeitung zu vermeiden
 	}
 

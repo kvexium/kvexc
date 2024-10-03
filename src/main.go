@@ -7,11 +7,12 @@ import (
 	"github.com/kvexium/kvexc/src/diagnostics"
 	"github.com/kvexium/kvexc/src/lexer"
 	"github.com/kvexium/kvexc/src/parser"
+	"github.com/kvexium/kvexc/src/registry"
 	"github.com/sanity-io/litter"
 )
 
 func main() {
-	diagnostics.CreateAll()
+	registry.CreateAll()
 
 	filePath := "./src/examples/"
 	fileName := "02.kvex"
